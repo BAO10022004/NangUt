@@ -3,18 +3,19 @@ import { Eye, EyeOff } from 'lucide-react';
 import '../assets/LoginPage.css';
 import { authenticateAccount } from '../services/AccountService';
 import { auth } from '../main';
+import { useNavigate } from 'react-router-dom';
 export default function LoginForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-
+const navigate = useNavigate();
   const handleSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     authenticateAccount(username, password)
         .then((account) => {
             if (account) {
                 auth.login(account.username, 'user', ''); 
-                window.location.href = '/#/dashboard';
+                navigate('/');
             } else {
                 alert('Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin.');
             }   
