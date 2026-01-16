@@ -50,6 +50,7 @@ export default function LoginForm() {
 
   return (
     <div className="login-container">
+      <p>Version 16.1.1</p>
       {/* Animated background boxes */}
       <div className="animated-box box-outer"></div>
       <div className="animated-box box-inner"></div>

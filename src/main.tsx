@@ -25,7 +25,7 @@ if (!rootElement) {
 }
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
-    <HashRouter basename="/NangUt">
+    <HashRouter >
       <Routes>
          {/* Public Route */}
         <Route path="/login" element={<Login />} />

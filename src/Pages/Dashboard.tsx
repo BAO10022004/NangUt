@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import '../assets/Dashboard.css';
 import {
   getAllTransactions,
@@ -19,7 +19,6 @@ const DashboardHome: React.FC = () => {
   });
   const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
   useEffect(() => {
     loadDashboardData();
   }, []);
