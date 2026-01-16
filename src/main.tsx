@@ -1,4 +1,3 @@
-
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Auth } from './Auth';
 import React from 'react';
@@ -13,9 +12,8 @@ export const auth = new Auth();
 
 ///////////=================== Protected Route Component======================================== //////////
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const isAuthenticated = auth.isAuthenticated();
   
-  if (!isAuthenticated) {
+  if (auth.getUsername()  === null) {
     return <Navigate to="/login" replace />;
   }
   return <>{children}</>;
