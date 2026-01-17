@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../assets/TypeTransactionPage.css';
 import { type TypeTransactionLevel } from '../models/TypeTransaction';
+import {type TypeTransaction} from '../models/TypeTransaction';
 import {
   addTypeTransactionLevel,
   updateTypeTransactionLevel,

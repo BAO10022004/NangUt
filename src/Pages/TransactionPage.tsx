@@ -1,21 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import '../assets/TransactionPage.css';
+import StatisticsCardsComponent from '../Compunents/StatisticsCardsCompunent';
 import {
   getAllTransactions,
   addTransaction,
   updateTransaction,
   deleteTransaction,
   filterTransactions,
-  type FilterTransactionParams
+  type FilterTransactionParams,
+  type TransactionStatistics
 } from '../services/TransactionService';
 import { getAllTypeTransactionLevel } from '../services/TypeTransactionLevelService';
-import type {  TypeTransactionLevel, StatusTransaction } from '../models/TypeTransaction';
+import type { TypeTransactionLevel, StatusTransaction } from '../models/TypeTransaction';
 import type { Transaction } from '../models/Transaction';
 
 const TransactionManagement: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
   const [typeTransactionLevels, setTypeTransactionLevels] = useState<TypeTransactionLevel[]>([]);
+  const [statistics, setStatistics] = useState<TransactionStatistics>({
+    totalIncome: 0,
+    totalExpense: 0,
+    balance: 0,
+    totalTransactions: 0,
+    pendingTransactions: 0,
+    completedTransactions: 0
+  });
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -45,6 +55,11 @@ const TransactionManagement: React.FC = () => {
     applyFilters();
   }, [searchTerm, startDate, endDate, selectedType, selectedStatus, transactions]);
 
+  useEffect(() => {
+    calculateStatistics();
+  }, [filteredTransactions]);
+
+  //////////=================== Load Data ======================================== //////////
   const loadData = async () => {
     try {
       setLoading(true);
@@ -63,6 +78,40 @@ const TransactionManagement: React.FC = () => {
     }
   };
 
+  //////////=================== Calculate Statistics ======================================== //////////
+  const calculateStatistics = () => {
+    const stats: TransactionStatistics = {
+      totalIncome: 0,
+      totalExpense: 0,
+      balance: 0,
+      totalTransactions: filteredTransactions.length,
+      pendingTransactions: 0,
+      completedTransactions: 0
+    };
+
+    filteredTransactions.forEach(transaction => {
+      // Calculate income and expense
+      if (transaction.typeTransaction.type === 'thu') {
+        stats.totalIncome += transaction.amount;
+      } else {
+        stats.totalExpense += transaction.amount;
+      }
+
+      // Count by status
+      if (transaction.status === 'pending') {
+        stats.pendingTransactions++;
+      } else {
+        stats.completedTransactions++;
+      }
+    });
+
+    // Calculate balance
+    stats.balance = stats.totalIncome - stats.totalExpense;
+
+    setStatistics(stats);
+  };
+
+  //////////=================== Apply Filters ======================================== //////////
   const applyFilters = async () => {
     try {
       const filters: FilterTransactionParams = {
@@ -80,6 +129,7 @@ const TransactionManagement: React.FC = () => {
     }
   };
 
+  //////////=================== Handle Add/Edit/Delete ======================================== //////////
   const handleAddTransaction = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -205,6 +255,12 @@ const TransactionManagement: React.FC = () => {
 
       <div className="transaction-content">
         <h1 className="page-title">Quản Lý Giao Dịch</h1>
+
+        {/* Statistics Cards */}
+        <StatisticsCardsComponent 
+          formatCurrency={formatCurrency}
+          stats={statistics}
+        />
 
         <button className="add-transaction-btn" onClick={() => setShowAddModal(true)}>
           + Thêm Giao Dịch
